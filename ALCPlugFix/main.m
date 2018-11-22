@@ -4,6 +4,7 @@
 //
 //  Created by Oleksandr Stoyevskyy on 11/3/16.
 //  Copyright © 2016 Oleksandr Stoyevskyy. All rights reserved.
+//  Updated for newer ALC codecs by black.dragon74
 //
 
 #import <Foundation/Foundation.h>
@@ -83,7 +84,7 @@ void sigHandler(int signo)
 
 int main(int argc, const char * argv[]) {
     @autoreleasepool {
-        NSLog(@"Headphones daemon running!");
+        NSLog(@"ALCPlugFix Daemon is listening on HDEF");
 
         signal(SIGHUP, sigHandler);
         signal(SIGTERM, sigHandler);
@@ -106,9 +107,6 @@ int main(int argc, const char * argv[]) {
         sourceAddr.mScope = kAudioDevicePropertyScopeOutput;
         sourceAddr.mElement = kAudioObjectPropertyElementMaster;
 
-        NSString *output1 = [@"hda-verb 0x18 SET_PIN_WIDGET_CONTROL 0x20" runAsCommand];
-        NSString *output2 = [@"hda-verb 0x1a SET_PIN_WIDGET_CONTROL 0x20" runAsCommand];
-
         AudioObjectAddPropertyListenerBlock(defaultDevice, &sourceAddr, dispatch_get_global_queue (DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(UInt32 inNumberAddresses, const AudioObjectPropertyAddress * inAddresses) {
 
             UInt32 bDataSourceId = 0;
@@ -116,14 +114,20 @@ int main(int argc, const char * argv[]) {
             AudioObjectGetPropertyData(defaultDevice, inAddresses, 0, NULL, &bDataSourceIdSize, &bDataSourceId);
             if (bDataSourceId == 'ispk') {
                 // Recognized as internal speakers
-                NSLog(@"Headphones removed! Fixing!");
-                NSString *output1 = [@"hda-verb 0x18 SET_PIN_WIDGET_CONTROL 0x20" runAsCommand];
-                NSString *output2 = [@"hda-verb 0x1a SET_PIN_WIDGET_CONTROL 0x20" runAsCommand];
+                NSLog(@"Headphones removed! Routing audio to speakers!");
+                NSString *command1 = [@"hda-verb 0x19 SET_PIN_WIDGET_CONTROL 0x25" runAsCommand];
+#ifdef DEBUG
+                NSLog(@"Executed command: %@", command1);
+#endif
+                NSLog(@"Audio is now routed to speakers.");
             } else if (bDataSourceId == 'hdpn') {
                 // Recognized as headphones
-                NSLog(@"Headphones inserted! Fixing!");
-                NSString *output1 = [@"hda-verb 0x18 SET_PIN_WIDGET_CONTROL 0x20" runAsCommand];
-                NSString *output2 = [@"hda-verb 0x1a SET_PIN_WIDGET_CONTROL 0x20" runAsCommand];
+                NSLog(@"Headphones connected! Routing audio to headphones!");
+                NSString *command1 = [@"hda-verb 0x19 SET_PIN_WIDGET_CONTROL 0x25" runAsCommand];
+#ifdef DEBUG
+                NSLog(@"Executed command: %@", command1);
+#endif
+                NSLog(@"Audio is now routed to headphones.");
             }
         });
 
