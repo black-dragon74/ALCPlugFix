@@ -1,0 +1,12 @@
+.DS_Store
+DerivedData
+Lilu.kext
+xcuserdata
+xcshareddata
+project.xcworkspace
+*.zlib
+AppleALC/kern_resources.cpp
+build
+.svace-dir
+cov-int
+/MacKernelSDK

@@ -84,7 +84,7 @@ void sigHandler(int signo)
 
 int main(int argc, const char * argv[]) {
     @autoreleasepool {
-        NSLog(@"ALCPlugFix Daemon is listening on HDEF");
+        NSLog(@"ALCPlugFix Daemon for AppleALC is listening on HDEF");
 
         signal(SIGHUP, sigHandler);
         signal(SIGTERM, sigHandler);
@@ -115,37 +115,17 @@ int main(int argc, const char * argv[]) {
             if (bDataSourceId == 'ispk') {
                 // Recognized as internal speakers
                 NSLog(@"Headphones removed! Routing audio to speakers!");
-                NSString *command1 = [@"hda-verb 0x12 SET_PIN_WIDGET_CONTROL 0x20" runAsCommand];
-                NSString *command2 = [@"hda-verb 0x17 SET_PIN_WIDGET_CONTROL 0x40" runAsCommand];
-                NSString *command3 = [@"hda-verb 0x19 SET_PIN_WIDGET_CONTROL 0x20" runAsCommand];
-                NSString *command4 = [@"hda-verb 0x1d SET_PIN_WIDGET_CONTROL 0x20" runAsCommand];
-                NSString *command5 = [@"hda-verb 0x1e SET_PIN_WIDGET_CONTROL 0x40" runAsCommand];
-                NSString *command6 = [@"hda-verb 0x21 SET_PIN_WIDGET_CONTROL 0xc0" runAsCommand];
+                NSString *command1 = [@"/usr/local/bin/alc-verb 0x19 SET_PIN_WIDGET_CONTROL 0x20" runAsCommand];
 #ifdef DEBUG
                 NSLog(@"Executed command: %@", command1);
-                NSLog(@"Executed command: %@", command2);
-                NSLog(@"Executed command: %@", command3);
-                NSLog(@"Executed command: %@", command4);
-                NSLog(@"Executed command: %@", command5);
-                NSLog(@"Executed command: %@", command6);
 #endif
                 NSLog(@"Audio is now routed to speakers.");
             } else if (bDataSourceId == 'hdpn') {
                 // Recognized as headphones
                 NSLog(@"Headphones connected! Routing audio to headphones!");
-                NSString *command1 = [@"hda-verb 0x12 SET_PIN_WIDGET_CONTROL 0x20" runAsCommand];
-                NSString *command2 = [@"hda-verb 0x17 SET_PIN_WIDGET_CONTROL 0x40" runAsCommand];
-                NSString *command3 = [@"hda-verb 0x19 SET_PIN_WIDGET_CONTROL 0x20" runAsCommand];
-                NSString *command4 = [@"hda-verb 0x1d SET_PIN_WIDGET_CONTROL 0x20" runAsCommand];
-                NSString *command5 = [@"hda-verb 0x1e SET_PIN_WIDGET_CONTROL 0x40" runAsCommand];
-                NSString *command6 = [@"hda-verb 0x21 SET_PIN_WIDGET_CONTROL 0xc0" runAsCommand];
+                NSString *command1 = [@"/usr/local/bin/alc-verb 0x19 SET_PIN_WIDGET_CONTROL 0x20" runAsCommand];
 #ifdef DEBUG
                 NSLog(@"Executed command: %@", command1);
-                NSLog(@"Executed command: %@", command2);
-                NSLog(@"Executed command: %@", command3);
-                NSLog(@"Executed command: %@", command4);
-                NSLog(@"Executed command: %@", command5);
-                NSLog(@"Executed command: %@", command6);
 #endif
                 NSLog(@"Audio is now routed to headphones.");
             }
